@@ -14,18 +14,22 @@ function mapCharacter(e){
 }
 
 function mapClick(e){
-	if (e.target.nodeName === 'WAVE') {
+	console.log('in map click');
+	if (e.target.nodeName === 'WAVE' || e.target.nodeName === 'CANVAS') {
 		// add or remove a point
 		MARK = wavesurfer.mark({
         	position: wavesurfer.getCurrentTime()
    		});
 
    		rememberMapping(CHAR, MARK);
+		document.removeEventListener('click', mapClick);
+	} else {
+		console.log ('not mapping click for ' + e.target.nodeName);
 	}
-	document.removeEventListener('click', mapClick);
 }
 
 function beginKeyMapping(){
+	console.log('begin key mapping');
 	CHAR = false;
 	MARK = false;
 	document.addEventListener('keypress', mapCharacter);
