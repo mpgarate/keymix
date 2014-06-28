@@ -3,18 +3,37 @@ var MARK = false;
 
 var MAPPINGS = [];
 
+function showOverlayContent(str,selector){
+	var content_overlay = $('.content-overlay');
+	$(content_overlay).addClass('overlay-visible');
+	$(content_overlay).html('<' + selector + '>' + str + '</' + selector + '>');
+	$(content_overlay).fadeTo(0, 0.5, function(){});
+}
+
+function fadeOutOverlay(){
+	var content_overlay = $('.content-overlay');
+	$(content_overlay).fadeTo('slow', 0, function(){
+		$(content_overlay).toggleClass('overlay-visible');
+		$(content_overlay).html('');
+	});
+}
+
 function mapCharacter(e){
 	var character = String.fromCharCode(e.keyCode);
 	console.log(character);
 
 	CHAR = character;
 
+	$('.mapping-overlay').toggleClass('overlay-visible');
+	showOverlayContent(CHAR,'h1');
+	fadeOutOverlay();
+
 	document.removeEventListener('keypress', mapCharacter);
 	document.addEventListener('click', mapClick);
 }
 
 function mapClick(e){
-	if (e.target.nodeName === 'WAVE') {
+	if (e.target.nodeName === 'WAVE' || e.target.nodeName == 'CANVAS') {
 		// add or remove a point
 		MARK = wavesurfer.mark({
         	position: wavesurfer.getCurrentTime()
@@ -28,7 +47,9 @@ function mapClick(e){
 function beginKeyMapping(){
 	CHAR = false;
 	MARK = false;
+	showOverlayContent('Press key to map.', 'h3');
 	document.addEventListener('keypress', mapCharacter);
+	$('.mapping-overlay').toggleClass('overlay-visible');
 }
 
 function rememberMapping(character, marker){
@@ -92,16 +113,12 @@ wavesurfer.on('ready', function () {
 	    if (character in MAPPINGS) {
 	        e.preventDefault();
 
-
 	        var percentage = MAPPINGS[character].percentage;
 
         	wavesurfer.seekTo(percentage);
         	console.log('seek to ' + percentage)
         	//wavesurfer.playPause();
 
-	    } else {
-	    	console.log('got here: ' + character);
-	    	console.log(MAPPINGS);
 	    }
 	});
 });
