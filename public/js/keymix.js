@@ -1,87 +1,49 @@
-'use strict';
+var CHAR = false;
+var MARK = false;
 
-// Create an instance
-var wavesurfer = Object.create(WaveSurfer);
+var MAPPINGS = [];
 
-// Init & load
-document.addEventListener('DOMContentLoaded', function () {
-    var options = {
-        container     : '#waveform',
-        waveColor     : 'violet',
-        progressColor : 'purple',
-        loaderColor   : 'purple',
-        cursorColor   : 'navy'
-    };
+function mapCharacter(e){
+	var character = String.fromCharCode(e.keyCode);
+	console.log(character);
 
-    if (location.search.match('scroll')) {
-        options.minPxPerSec = 100;
-        options.scrollParent = true;
-    }
+	CHAR = character;
 
-    if (location.search.match('normalize')) {
-        options.normalize = true;
-    }
+	document.removeEventListener('keypress', mapCharacter);
+	document.addEventListener('click', mapClick);
+}
 
-    /* Progress bar */
-    (function () {
-        var progressDiv = document.querySelector('#progress-ndr');
-        var progressBar = progressDiv.querySelector('.progress-bar');
+function mapClick(e){
+	if (e.target.nodeName === 'WAVE') {
+		// add or remove a point
+		MARK = wavesurfer.mark({
+        	position: wavesurfer.getCurrentTime()
+   		});
 
-        var showProgress = function (percent) {
-            progressDiv.style.display = 'block';
-            progressBar.style.width = percent + '%';
-        };
+   		rememberMapping(CHAR, MARK);
+	}
+	document.removeEventListener('click', mapClick);
+}
 
-        var hideProgress = function () {
-            progressDiv.style.display = 'none';
-        };
+function beginKeyMapping(){
+	CHAR = false;
+	MARK = false;
+	document.addEventListener('keypress', mapCharacter);
+}
 
-        wavesurfer.on('loading', showProgress);
-        wavesurfer.on('ready', hideProgress);
-        wavesurfer.on('destroy', hideProgress);
-        wavesurfer.on('error', hideProgress);
-    }());
+function rememberMapping(character, marker){
+	MAPPINGS[character] = marker.position;
+	console.log(MAPPINGS);
 
-    wavesurfer.on('ready', function () {
-        // Init Timeline plugin
-        var timeline = Object.create(WaveSurfer.Timeline);
+	displayMappings();
+}
 
-        timeline.init({
-            wavesurfer: wavesurfer,
-            container: '#wave-timeline'
-        });
+function displayMappings(){
+	var keyMappings = $('#key-mappings');
+	$(keyMappings).html("");
 
-    });
-
-    // Init wavesurfer
-    wavesurfer.init(options);
-    wavesurfer.load('/mj.mp3');
-
-    // Bind buttons and keypresses
-	wavesurfer.on('ready', function () {
-	    var handlers = {
-	        'play': function () {
-	            wavesurfer.playPause();
-	        }
-	    };
-
-	    var map = {
-	        32: 'play'       // spacebar
-	    };
-
-	    document.addEventListener('keydown', function (e) {
-	        if (e.keyCode in map) {
-	            e.preventDefault();
-	            var handler = handlers[map[e.keyCode]];
-	            handler && handler(e);
-	        }
-	    });
-
-	    document.addEventListener('click', function (e) {
-	        var action = e.target.dataset && e.target.dataset.action;
-	        if (action && action in handlers) {
-	            handlers[action](e);
-	        }
-	    });
-	});
-});
+	for (var key in MAPPINGS){
+		$(keyMappings).append(key + " : " + MAPPINGS[key]);
+		$(keyMappings).append('<br>');
+	}
+}
