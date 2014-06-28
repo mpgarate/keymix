@@ -63,22 +63,18 @@ document.addEventListener('DOMContentLoaded', function () {
 	    var handlers = {
 	        'play': function () {
 	            wavesurfer.playPause();
-	        },
-	        'test': function () {
-	        	wavesurfer.seekTo(0.5);
-	        	wavesurfer.playPause();
 	        }
 	    };
 
 	    var map = {
-	        32: 'test'       // spacebar
+	        32: 'play'       // spacebar
 	    };
 
 	    document.addEventListener('keydown', function (e) {
 	        if (e.keyCode in map) {
 	            e.preventDefault();
 	            var handler = handlers[map[e.keyCode]];
-	            handler && handler(e);
+	            handler && handler(0.5);
 	        }
 	    });
 

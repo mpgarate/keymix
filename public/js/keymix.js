@@ -32,7 +32,8 @@ function beginKeyMapping(){
 }
 
 function rememberMapping(character, marker){
-	MAPPINGS[character] = marker.position;
+	console.log(marker);
+	MAPPINGS[character] = marker.percentage;
 	console.log(MAPPINGS);
 
 	displayMappings();
@@ -47,3 +48,24 @@ function displayMappings(){
 		$(keyMappings).append('<br>');
 	}
 }
+
+
+wavesurfer.on('ready', function () {
+	document.addEventListener('keypress', function (e) {
+		var character = String.fromCharCode(e.keyCode);
+	    if (character in MAPPINGS) {
+	        e.preventDefault();
+
+
+	        var percentage = MAPPINGS[character];
+
+        	wavesurfer.seekTo(percentage);
+        	console.log('seek to ' + percentage)
+        	//wavesurfer.playPause();
+
+	    } else {
+	    	console.log('got here: ' + character);
+	    	console.log(MAPPINGS);
+	    }
+	});
+});
