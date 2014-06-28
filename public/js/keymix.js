@@ -33,9 +33,18 @@ function beginKeyMapping(){
 
 function rememberMapping(character, marker){
 	console.log(marker);
-	MAPPINGS[character] = marker.percentage;
+	MAPPINGS[character] = marker;
 	console.log(MAPPINGS);
 
+	displayMappings();
+}
+
+function removeMapping(key){
+
+	MAPPINGS[key].remove();
+	delete MAPPINGS[key];
+	console.log('removing mapping: ' + key);
+	console.log(MAPPINGS);
 	displayMappings();
 }
 
@@ -44,11 +53,19 @@ function displayMappings(){
 	$(keyMappings).html("");
 
 	for (var key in MAPPINGS){
-		$(keyMappings).append(key + " : " + MAPPINGS[key]);
+		$(keyMappings).append(key + " : " + MAPPINGS[key].position.toFixed(2) + " seconds | ");
+		$(keyMappings).append('<a href="javascript:void(0)" class="remove-mapping">remove</a>');
 		$(keyMappings).append('<br>');
 	}
-}
 
+	$(keyMappings).data('mapping-key',key);
+
+	$('.remove-mapping').click(function(){
+		var key = $(this).parent().data('mapping-key');
+		removeMapping(key);
+	});
+
+}
 
 wavesurfer.on('ready', function () {
 	document.addEventListener('keypress', function (e) {
@@ -57,7 +74,7 @@ wavesurfer.on('ready', function () {
 	        e.preventDefault();
 
 
-	        var percentage = MAPPINGS[character];
+	        var percentage = MAPPINGS[character].percentage;
 
         	wavesurfer.seekTo(percentage);
         	console.log('seek to ' + percentage)
