@@ -48,11 +48,30 @@ function removeMapping(key){
 	displayMappings();
 }
 
+function sortMappings(){
+	var sortable = [];
+
+	for (var key in MAPPINGS){
+		sortable.push([key,MAPPINGS[key]]);
+	}
+
+	sortable.sort(function(a,b){
+		console.log('sorting');
+		console.log(a[1]);
+		return a[1].percentage - b[1].percentage;
+	});
+
+	return sortable;
+}
+
 function displayMappings(){
+	var sortedMappings = sortMappings();
+
 	var keyMappings = $('#key-mappings');
 	$(keyMappings).html("");
 
-	for (var key in MAPPINGS){
+	for (var i = 0; i < sortedMappings.length; i++){
+		var key = sortedMappings[i][0];
 		$(keyMappings).append(key + " : " + MAPPINGS[key].position.toFixed(2) + " seconds | ");
 		$(keyMappings).append('<a href="javascript:void(0)" class="remove-mapping">remove</a>');
 		$(keyMappings).append('<br>');
