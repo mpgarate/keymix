@@ -29,19 +29,12 @@ function mapCharacter(e){
 	fadeOutOverlay();
 
 	document.removeEventListener('keypress', mapCharacter);
-	document.addEventListener('click', mapClick);
-}
 
-function mapClick(e){
-	if (e.target.nodeName === 'WAVE' || e.target.nodeName == 'CANVAS') {
-		// add or remove a point
-		MARK = wavesurfer.mark({
-        	position: wavesurfer.getCurrentTime()
-   		});
+	MARK = wavesurfer.mark({
+    	position: wavesurfer.getCurrentTime()
+		});
 
-   		rememberMapping(CHAR, MARK);
-	}
-	document.removeEventListener('click', mapClick);
+		rememberMapping(CHAR, MARK);
 }
 
 function beginKeyMapping(){
@@ -93,12 +86,15 @@ function displayMappings(){
 
 	for (var i = 0; i < sortedMappings.length; i++){
 		var key = sortedMappings[i][0];
-		$(keyMappings).append(key + " : " + MAPPINGS[key].position.toFixed(2) + " seconds | ");
-		$(keyMappings).append('<a href="javascript:void(0)" class="remove-mapping">remove</a>');
-		$(keyMappings).append('<br>');
+		var className = 'mapping-' + key;
+		$(keyMappings).append('<div class="mapping ' + className + '"></div>');
+		var thisDiv = $('.'+className);
+
+		$(thisDiv).append(key + " : " + MAPPINGS[key].position.toFixed(2) + " seconds | ");
+		$(thisDiv).append('<a href="javascript:void(0)" class="remove-mapping btn btn-xs btn-danger">remove</a>');
+		$(thisDiv).data('mapping-key',key);
 	}
 
-	$(keyMappings).data('mapping-key',key);
 
 	$('.remove-mapping').click(function(){
 		var key = $(this).parent().data('mapping-key');

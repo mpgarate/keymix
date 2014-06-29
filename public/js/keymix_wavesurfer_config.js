@@ -11,7 +11,8 @@ document.addEventListener('DOMContentLoaded', function () {
         progressColor : 'purple',
         loaderColor   : 'purple',
         cursorColor   : 'navy',
-        dragSelection : false
+        dragSelection : false,
+        normalize     : true 
     };
 
     if (location.search.match('scroll')) {
@@ -56,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Init wavesurfer
     wavesurfer.init(options);
-    wavesurfer.load('/mj.mp3');
+    wavesurfer.load('/tycho2.mp3');
 
     // Bind buttons and keypresses
 	wavesurfer.on('ready', function () {
